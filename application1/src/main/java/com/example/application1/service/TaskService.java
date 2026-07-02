@@ -104,25 +104,9 @@ public class TaskService {
 
         return generateNewTaskWithGemini(user, song);
     }
- 
 
-    public void submitTask(TaskSubmissionDTO submission) {
-        Optional<Task> taskOptional = this.taskRepository.findById(submission.getTaskId());
-        if (taskOptional.isEmpty()) {
-            throw new IllegalArgumentException("Tarefa não encontrada!.");
-        }
-        Task task = taskOptional.get();
-        User user = task.getUser();
-
-        List<String> answerKey = task.getTargetWords();
-        List<String> userAnswers = submission.getUserAnswers();
-
-        float finalScore = calculateScore(answerKey, userAnswers);
-        updateTaskStatus(task, finalScore);
-        createFlashcardsForTask(user, answerKey);
-    }
-
-
+    
+    
     private float calculateScore(List<String> answerKey, List<String> userAnswers) {
         if (answerKey == null || answerKey.isEmpty()) {
             return 0.0f;
@@ -159,17 +143,43 @@ public class TaskService {
         }
 
         for (String word : answerKey) {
-            Flashcard flashcard = new Flashcard();
-            flashcard.setUser(user);
-            flashcard.setWord(word.trim());
-            flashcard.setInterval(1); 
-            flashcard.setNextReviewDate(LocalDate.now().plusDays(1));
-            flashcard.setEaseFactor(2.5f); 
-            flashcard.setLastQuality(null);
-            flashcard.setCreatedAt(LocalDateTime.now());
+            if (word == null) continue;
 
-            this.flashcardRepository.save(flashcard);
+            String cleanWord = word.trim();
+
+            boolean alreadyExists = this.flashcardRepository.existsByUserIdAndWordIgnoreCase(user.getId(), cleanWord);
+
+            if (!alreadyExists) {
+                Flashcard flashcard = new Flashcard();
+                flashcard.setUser(user);
+                flashcard.setWord(cleanWord);
+                flashcard.setInterval(1); 
+                flashcard.setNextReviewDate(LocalDate.now().plusDays(1));
+                flashcard.setEaseFactor(2.5f); 
+                flashcard.setLastQuality(null);
+                flashcard.setCreatedAt(LocalDateTime.now());
+
+                this.flashcardRepository.save(flashcard);
+            }
         }
     }
+
+
+    public void submitTask(TaskSubmissionDTO submission) {
+        Optional<Task> taskOptional = this.taskRepository.findById(submission.getTaskId());
+        if (taskOptional.isEmpty()) {
+            throw new IllegalArgumentException("Tarefa não encontrada!.");
+        }
+        Task task = taskOptional.get();
+        User user = task.getUser();
+
+        List<String> answerKey = task.getTargetWords();
+        List<String> userAnswers = submission.getUserAnswers();
+
+        float finalScore = calculateScore(answerKey, userAnswers);
+        updateTaskStatus(task, finalScore);
+        createFlashcardsForTask(user, answerKey);
+    }
+
 
 }
