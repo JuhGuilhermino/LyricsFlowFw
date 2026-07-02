@@ -14,19 +14,15 @@ public class Song {
     @Column(columnDefinition = "TEXT")
     private String lyrics;
 
-    @Column(columnDefinition = "TEXT")
-    private String mask;
-
     // Construtor Padrão
     public Song() {}
 
     // Construtor Completo
-    public Song(Long id, String title, String artist, String lyrics, String mask) {
+    public Song(Long id, String title, String artist, String lyrics) {
         this.id = id;
         this.title = title;
         this.artist = artist;
         this.lyrics = lyrics;
-        this.mask = mask;
     }
 
     // Getters e Setters
@@ -42,6 +38,4 @@ public class Song {
     public String getLyrics() { return lyrics; }
     public void setLyrics(String lyrics) { this.lyrics = lyrics; }
 
-    public String getMask() { return mask; }
-    public void setMask(String mask) { this.mask = mask; }
 }

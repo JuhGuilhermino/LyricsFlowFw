@@ -2,6 +2,7 @@ package com.example.application1.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "tasks")
@@ -18,7 +19,14 @@ public class Task {
     @JoinColumn(name = "song_id")
     private Song song;
 
+    @Column(name = "score")
     private Float score;
+
+    @Column(name = "masked_lyrics", columnDefinition = "TEXT")
+    private String maskedLyrics;
+
+    @Column(name = "target_words")
+    private List<String> targetWords;
 
     private LocalDateTime completedAt;
 
@@ -26,11 +34,13 @@ public class Task {
     public Task() {}
 
     // Construtor Completo
-    public Task(Long id, User user, Song song, Float score, LocalDateTime completedAt) {
+    public Task(Long id, User user, Song song, Float score, String maskedLyrics, List<String> targetWords, LocalDateTime completedAt) {
         this.id = id;
         this.user = user;
         this.song = song;
         this.score = score;
+        this.maskedLyrics = maskedLyrics;
+        this.targetWords = targetWords;
         this.completedAt = completedAt;
     }
 
@@ -46,6 +56,12 @@ public class Task {
 
     public Float getScore() { return score; }
     public void setScore(Float score) { this.score = score; }
+
+    public String getMaskedLyrics() { return maskedLyrics; }
+    public void setMaskedLyrics(String maskedLyrics) { this.maskedLyrics = maskedLyrics; }
+
+    public List<String> getTargetWords() { return targetWords; }
+    public void setTargetWords(List<String> targetWords) { this.targetWords = targetWords; }
 
     public LocalDateTime getCompletedAt() { return completedAt; }
     public void setCompletedAt(LocalDateTime completedAt) { this.completedAt = completedAt; }

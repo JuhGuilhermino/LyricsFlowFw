@@ -29,12 +29,20 @@ POST {{baseUrl}}/submit
 Content-Type: application/json
 
 {
-    "taskId": 21,
+    "taskId": 25,
     "userId": 10,
     "userAnswers": [
-        "look",
-        "stars",
-        "shine",
-        "yellow"
+        "life",
+        "escape",
+        "eyes",
+        "poor",
+        "need",
+        "wind",
+        "killed",
+        "gun",
+        "dead",
+        "cry",
+        "body",
+        "die"
     ]
 }

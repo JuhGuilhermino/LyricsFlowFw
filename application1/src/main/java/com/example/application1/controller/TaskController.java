@@ -45,11 +45,10 @@ public class TaskController {
         }
     }
 
-    /**
     @PostMapping("/submit")
     public ResponseEntity<String> submitTask(@RequestBody TaskSubmissionDTO submission) {
         try {
-            this.taskService.submitExercise(submission);
+            this.taskService.submitTask(submission);
             return ResponseEntity.ok("Exercício enviado com sucesso. Pontuação calculada e flashcards gerados.");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -59,7 +58,7 @@ public class TaskController {
         }
     }
 
-    
+    /**    
     @PostMapping("/music")
     public ResponseEntity<?> findOrSaveMusic(@RequestBody MusicRequestDTO request) {
         try {

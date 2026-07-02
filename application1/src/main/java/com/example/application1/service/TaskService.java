@@ -22,10 +22,11 @@
 package com.example.application1.service;
 
 import com.example.application1.client.GeminiClient;
-import com.example.application1.client.VagalumeAPIClient;
 import com.example.application1.dto.*;
 import com.example.application1.model.*;
 import com.example.application1.repository.*;
+
+import jakarta.transaction.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -42,20 +43,17 @@ public class TaskService {
     private final SongRepository songRepository;
     private final FlashcardRepository flashcardRepository;
     private final GeminiClient geminiClient;
-    //private final VagalumeAPIClient vagalumeAPIClient;
 
     public TaskService(TaskRepository taskRepository, 
                        UserRepository userRepository, 
                        SongRepository songRepository, 
                        FlashcardRepository flashcardRepository,
-                       GeminiClient geminiClient, 
-                       VagalumeAPIClient vagalumeAPIClient) {
+                       GeminiClient geminiClient) {
         this.taskRepository = taskRepository;
         this.userRepository = userRepository;
         this.songRepository = songRepository;
         this.flashcardRepository = flashcardRepository;
         this.geminiClient = geminiClient;
-        //this.vagalumeAPIClient = vagalumeAPIClient;
     }
 
     
@@ -72,6 +70,7 @@ public class TaskService {
         }).collect(Collectors.toList());
     }
 
+    @Transactional
     public TaskGenerateResponseDTO generateTask(Long userId, Long songId) {
         Optional<User> userOptional = this.userRepository.findById(userId);
         Optional<Song> songOptional = this.songRepository.findById(songId);
@@ -95,18 +94,18 @@ public class TaskService {
         newTask.setUser(user);
         newTask.setSong(song);
         newTask.setScore(0.0f);
+        newTask.setMaskedLyrics(exercise.getMaskedLyrics());
+        newTask.setTargetWords(exercise.getTargetWords());
         newTask.setCompletedAt(null);
 
-        
         Task task = this.taskRepository.save(newTask);
 
         exercise.setTaskId(task.getId());
 
         return exercise;
     }
-
-    /* 
-    public void submitExercise(TaskSubmissionDTO submission) {
+ 
+    public void submitTask(TaskSubmissionDTO submission) {
         Optional<Task> taskOptional = this.taskRepository.findById(submission.getTaskId());
         if (taskOptional.isEmpty()) {
             throw new IllegalArgumentException("Tarefa não encontrada!.");
@@ -114,22 +113,13 @@ public class TaskService {
         Task task = taskOptional.get();
         User user = task.getUser();
 
-        String levelStr = user.getCurrentLevel() != null ? user.getCurrentLevel().name() : "BEGINNER";
-        TaskGenerateResponsetDTO originalExercise = this.geminiClient.generateTask(task.getSong().getLyrics(), levelStr);
-        
-        if (originalExercise == null) {
-            throw new RuntimeException("Could not retrieve answer key for validation.");
-        }
-
-        List<String> answerKey = originalExercise.getTargetWords();
+        List<String> answerKey = task.getTargetWords();
         List<String> userAnswers = submission.getUserAnswers();
 
         float finalScore = calculateScore(answerKey, userAnswers);
         updateTaskStatus(task, finalScore);
         createFlashcardsForTask(user, answerKey);
     }
-    */
-    
 
     private float calculateScore(List<String> answerKey, List<String> userAnswers) {
         if (answerKey == null || answerKey.isEmpty()) {
