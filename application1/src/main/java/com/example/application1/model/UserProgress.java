@@ -2,85 +2,85 @@ package com.example.application1.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import com.framework.learning_core.domain.BaseUserProgress;
 
 @Entity
 @Table(name = "user_progress", schema = "public")
-public class UserProgress {
+public class UserProgress extends BaseUserProgress<User> {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    // Construtor Padrão exigido pelo JPA
+    public UserProgress() {
+        super();
+    }
 
-    @OneToOne
-    @JoinColumn(name = "user_id", unique = true)
-    private User user;
-
-    @Column(name = "created_at", columnDefinition = "timestamp without time zone DEFAULT now()")
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at", columnDefinition = "timestamp without time zone DEFAULT now()")
-    private LocalDateTime updatedAt;
-
-    @Column(name = "total_tasks_completd")
-    private Integer totalTasksCompleted;
-
-    @Column(name = "average_task_score")
-    private Float averageTaskScore;
-
-    @Column(name = "total_target_words")
-    private Integer totalTargetWords;
-
-    @Column(name = "total_flashcards_count")
-    private Integer totalFlashcardsCount;
-
-    public UserProgress() {}
-
+    // Construtor Completo repassando os parâmetros estruturais para o framework
     public UserProgress(Long id, User user, LocalDateTime createdAt, LocalDateTime updatedAt, 
                         Integer totalTasksCompleted, Float averageTaskScore, 
                         Integer totalTargetWords, Integer totalFlashcardsCount) {
-        this.id = id;
-        this.user = user;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.totalTasksCompleted = totalTasksCompleted;
-        this.averageTaskScore = averageTaskScore;
-        this.totalTargetWords = totalTargetWords;
-        this.totalFlashcardsCount = totalFlashcardsCount;
+        super(id, user, createdAt, updatedAt, totalTasksCompleted, averageTaskScore, totalTargetWords, totalFlashcardsCount);
     }
 
     @PrePersist
     protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now();
+        this.setCreatedAt(now);
+        this.setUpdatedAt(now);
     }
-
 
     @PreUpdate
     protected void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
+        this.setUpdatedAt(LocalDateTime.now());
     }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    // Mapeamento das anotações JPA nos métodos Getter herdados
 
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Override
+    public Long getId() { 
+        return super.getId(); 
+    }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    @OneToOne
+    @JoinColumn(name = "user_id", unique = true)
+    @Override
+    public User getUser() { 
+        return super.getUser(); 
+    }
 
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+    @Column(name = "created_at", columnDefinition = "timestamp without time zone DEFAULT now()")
+    @Override
+    public LocalDateTime getCreatedAt() { 
+        return super.getCreatedAt(); 
+    }
 
-    public Integer getTotalTasksCompleted() { return totalTasksCompleted; }
-    public void setTotalTasksCompleted(Integer totalTasksCompleted) { this.totalTasksCompleted = totalTasksCompleted; }
+    @Column(name = "updated_at", columnDefinition = "timestamp without time zone DEFAULT now()")
+    @Override
+    public LocalDateTime getUpdatedAt() { 
+        return super.getUpdatedAt(); 
+    }
 
-    public Float getAverageTaskScore() { return averageTaskScore; }
-    public void setAverageTaskScore(Float averageTaskScore) { this.averageTaskScore = averageTaskScore; }
+    @Column(name = "total_tasks_completd") // Mantido o typo original da tabela ('completd')
+    @Override
+    public Integer getTotalTasksCompleted() { 
+        return super.getTotalTasksCompleted(); 
+    }
 
-    public Integer getTotalTargetWords() { return totalTargetWords; }
-    public void setTotalTargetWords(Integer totalTargetWords) { this.totalTargetWords = totalTargetWords; }
+    @Column(name = "average_task_score")
+    @Override
+    public Float getAverageTaskScore() { 
+        return super.getAverageTaskScore(); 
+    }
 
-    public Integer getTotalFlashcardsCount() { return totalFlashcardsCount; }
-    public void setTotalFlashcardsCount(Integer totalFlashcardsCount) { this.totalFlashcardsCount = totalFlashcardsCount; }
+    @Column(name = "total_target_words")
+    @Override
+    public Integer getTotalTargetWords() { 
+        return super.getTotalTargetWords(); 
+    }
+
+    @Column(name = "total_flashcards_count")
+    @Override
+    public Integer getTotalFlashcardsCount() { 
+        return super.getTotalFlashcardsCount(); 
+    }
 }
