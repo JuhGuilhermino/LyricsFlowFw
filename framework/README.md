@@ -28,14 +28,14 @@ Distribuição da refatoração das classes:
 **Ludmilla**
 * [x] UserProgress.java
 * [x] Flashcard.java
-* [ ] UserProgressRepository.java
-* [ ] FlashcardRepository.java
-* [ ] DashboardService.java
+* [x] UserProgressRepository.java
+* [x] FlashcardRepository.java
+* [x] DashboardService.java
 * [ ] FlashcardService.java
 * [ ] GeminiClient.java -> *método referente aos flashcards*
 * [ ] DeashboardController.java
 * [ ] FlashcardController.java
-* [ ] DashboardDTO.java
+* [x] DashboardDTO.java
 * [ ] FlashcardAnswerDTO.java
 * [ ] FlashcardDetailsResponseDTO.java
 
