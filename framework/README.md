@@ -26,8 +26,8 @@ Para disponbilizar esse framework para outras aplicações locais. Abra o termin
 ## To-do
 Distribuição da refatoração das classes:
 **Ludmilla**
-* [ ] UserProgress.java
-* [ ] Flashcard.java
+* [x] UserProgress.java
+* [x] Flashcard.java
 * [ ] UserProgressRepository.java
 * [ ] FlashcardRepository.java
 * [ ] DashboardService.java

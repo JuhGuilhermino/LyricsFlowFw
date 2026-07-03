@@ -29,8 +29,8 @@ POST {{baseUrl}}/submit
 Content-Type: application/json
 
 {
-    "taskId": 27,
-    "userId": 11,
+    "taskId": 28,
+    "userId": 12,
     "userAnswers": [
         "desert",
         "wind",

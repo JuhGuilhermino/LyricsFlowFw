@@ -1,7 +1,7 @@
 @baseUrl = http://localhost:8080/flashcards
 
 ### Listar todos os flashcards de um usuário
-GET {{baseUrl}}?userId=10
+GET {{baseUrl}}?userId=12
 Accept: application/json
 
 ### Revisar um Flashcard isolado via pesquisa direta

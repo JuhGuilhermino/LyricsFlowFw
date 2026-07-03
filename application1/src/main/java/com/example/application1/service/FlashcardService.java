@@ -2,7 +2,7 @@ package com.example.application1.service;
 
 import com.example.application1.dto.FlashcardAnswerDTO;
 import com.example.application1.dto.FlashcardDetailsResponseDTO;
-import com.example.application1.enums.FlashcardAnswerQuality;
+import com.framework.learning_core.domain.EnumFlashcardAnswerQuality;
 import com.example.application1.model.Flashcard;
 import com.example.application1.repository.FlashcardRepository;
 import com.example.application1.client.GeminiClient;
@@ -48,9 +48,9 @@ public class FlashcardService {
         Flashcard card = this.flashcardRepository.findById(answerDTO.getFlashcardId())
                 .orElseThrow(() -> new IllegalArgumentException("Flashcard não encontrado com o ID: " + answerDTO.getFlashcardId()));
 
-        FlashcardAnswerQuality qualityEnum;
+        EnumFlashcardAnswerQuality qualityEnum;
         try {
-            qualityEnum = FlashcardAnswerQuality.valueOf(answerDTO.getQuality().toUpperCase());
+            qualityEnum = EnumFlashcardAnswerQuality.valueOf(answerDTO.getQuality().toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Qualidade inválida fornecida: " + answerDTO.getQuality());
         }
@@ -61,7 +61,7 @@ public class FlashcardService {
     }
 
 
-    private void applySM2(Flashcard card, FlashcardAnswerQuality quality) {
+    private void applySM2(Flashcard card, EnumFlashcardAnswerQuality quality) {
         int q = switch (quality) {
             case PERFECT   -> 5;
             case EASY      -> 4;
@@ -119,9 +119,9 @@ public class FlashcardService {
         Flashcard card = this.flashcardRepository.findByUserIdAndWordIgnoreCase(userId, word.trim())
                 .orElseThrow(() -> new IllegalArgumentException("Nenhum flashcard encontrado para a palavra '" + word + "' neste usuário."));
 
-        FlashcardAnswerQuality qualityEnum;
+        EnumFlashcardAnswerQuality qualityEnum;
         try {
-            qualityEnum = FlashcardAnswerQuality.valueOf(quality.toUpperCase());
+            qualityEnum = EnumFlashcardAnswerQuality.valueOf(quality.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Qualidade inválida fornecida: " + quality);
         }

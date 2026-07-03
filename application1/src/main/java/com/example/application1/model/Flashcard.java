@@ -3,69 +3,68 @@ package com.example.application1.model;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import com.example.application1.enums.FlashcardAnswerQuality;
+import com.framework.learning_core.domain.BaseFlashcard;
+import com.framework.learning_core.domain.EnumFlashcardAnswerQuality;
 
 @Entity
 @Table(name = "flashcards")
-public class Flashcard {
+public class Flashcard extends BaseFlashcard<User> {
+
+    // Construtor Padrão exigido pelo JPA
+    public Flashcard() {
+        super();
+    }
+
+    // Construtor Completo passando os tipos concretos
+    public Flashcard(Long id, User user, String word, Integer interval, LocalDate nextReviewDate, Float easeFactor, EnumFlashcardAnswerQuality lastQuality, LocalDateTime createdAt) {
+        super(id, user, word, interval, nextReviewDate, easeFactor, lastQuality, createdAt);
+    }
+
+    // Mapeamento das anotações JPA nos métodos herdados
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Override
+    public Long getId() { 
+        return super.getId(); 
+    }
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
-
-    private String word;
-
-    @Column(name = "review_interval") // Evita usar palavra reservada 'interval' no banco SQL
-    private Integer interval;
-
-    private LocalDate nextReviewDate;
-
-    private Float easeFactor;
-
-    @Enumerated(EnumType.STRING)
-    private FlashcardAnswerQuality lastQuality;
-
-    private LocalDateTime createdAt;
-
-    // Construtor Padrão
-    public Flashcard() {}
-
-    // Construtor Completo
-    public Flashcard(Long id, User user, String word, Integer interval, LocalDate nextReviewDate, Float easeFactor, FlashcardAnswerQuality lastQuality, LocalDateTime createdAt) {
-        this.id = id;
-        this.user = user;
-        this.word = word;
-        this.interval = interval;
-        this.nextReviewDate = nextReviewDate;
-        this.easeFactor = easeFactor;
-        this.lastQuality = lastQuality;
-        this.createdAt = createdAt;
+    @Override
+    public User getUser() { 
+        return super.getUser(); 
     }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    @Override
+    public String getWord() { 
+        return super.getWord(); 
+    }
 
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
+    @Column(name = "review_interval") // Evita a palavra reservada 'interval' no SQL
+    @Override
+    public Integer getInterval() { 
+        return super.getInterval(); 
+    }
 
-    public String getWord() { return word; }
-    public void setWord(String word) { this.word = word; }
+    @Override
+    public LocalDate getNextReviewDate() { 
+        return super.getNextReviewDate(); 
+    }
 
-    public Integer getInterval() { return interval; }
-    public void setInterval(Integer interval) { this.interval = interval; }
+    @Override
+    public Float getEaseFactor() { 
+        return super.getEaseFactor(); 
+    }
 
-    public LocalDate getNextReviewDate() { return nextReviewDate; }
-    public void setNextReviewDate(LocalDate nextReviewDate) { this.nextReviewDate = nextReviewDate; }
+    @Enumerated(EnumType.STRING)
+    @Override
+    public EnumFlashcardAnswerQuality getLastQuality() { 
+        return super.getLastQuality(); 
+    }
 
-    public Float getEaseFactor() { return easeFactor; }
-    public void setEaseFactor(Float easeFactor) { this.easeFactor = easeFactor; }
-
-    public FlashcardAnswerQuality getLastQuality() { return lastQuality; }
-    public void setLastQuality(FlashcardAnswerQuality lastQuality) { this.lastQuality = lastQuality; }
-
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    @Override
+    public LocalDateTime getCreatedAt() { 
+        return super.getCreatedAt(); 
+    }
 }
