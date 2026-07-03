@@ -11,6 +11,7 @@ import java.util.List;
 @Repository
 public interface FlashcardRepository extends JpaRepository<Flashcard, Long> {
     List<Flashcard> findDueCardsByUserId(@Param("userId") Long userId, @Param("today") LocalDate today);
+    List<Flashcard> findByUserIdAndNextReviewDateLessThanEqual(Long userId, LocalDate today);
     boolean existsByUserIdAndWordIgnoreCase(Long userId, String word);
     Optional<Flashcard> findByUserIdAndWordIgnoreCase(Long userId, String word);
     List<Flashcard> findByUserId(Long userId);
