@@ -22,10 +22,10 @@ framework/
 ## To-do
 Distribuição da refatoração das classes:
 **Ludmilla**
-* [ ] UserProgress.java
-* [ ] Flashcard.java
-* [ ] UserProgressRepository.java
-* [ ] FlashcardRepository.java
+* [x] UserProgress.java
+* [x] Flashcard.java
+* [x] UserProgressRepository.java
+* [x] FlashcardRepository.java
 * [ ] DashboardService.java
 * [ ] FlashcardService.java
 * [ ] GeminiClient.java -> *método referente aos flashcards*
