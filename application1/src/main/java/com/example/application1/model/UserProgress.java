@@ -21,7 +21,7 @@ public class UserProgress {
     @Column(name = "updated_at", columnDefinition = "timestamp without time zone DEFAULT now()")
     private LocalDateTime updatedAt;
 
-    @Column(name = "total_tasks_completed")
+    @Column(name = "total_tasks_completd")
     private Integer totalTasksCompleted;
 
     @Column(name = "average_task_score")

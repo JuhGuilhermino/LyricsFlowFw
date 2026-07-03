@@ -3,68 +3,57 @@ package com.example.application1.model;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import com.example.application1.enums.LanguageLevel;
+import com.framework.learning_core.domain.BaseUser;
 
 @Entity
 @Table(name = "users")
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class User extends BaseUser {
 
-    @Column(unique = true, nullable = false)
-    private String username;
-
-    @Column(unique = true, nullable = false)
-    private String email;
-
+    // A senha e detalhes de segurança ficam na aplicação concreta
     @Column(nullable = false)
     private String password;
 
-    private String avatarPath;
-
-    @Enumerated(EnumType.STRING)
-    private LanguageLevel currentLevel;
-
-    private LocalDateTime createdAt;
-
     @PrePersist
     protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
+        this.setCreatedAt(LocalDateTime.now());
     }
 
-    // Construtor Padrão
-    public User() {}
+    // Construtor Padrão exigido pelo JPA
+    public User() {
+        super();
+    }
 
-    // Construtor Completo
+    // Construtor Completo mapeando os parâmetros para a classe abstrata do framework
     public User(Long id, String username, String email, String password, String avatarPath, LanguageLevel currentLevel, LocalDateTime createdAt) {
-        this.id = id;
-        this.username = username;
-        this.email = email;
+        super(id, username, email, avatarPath, currentLevel != null ? currentLevel.name() : null, createdAt);
         this.password = password;
-        this.avatarPath = avatarPath;
-        this.currentLevel = currentLevel;
-        this.createdAt = createdAt;
     }
 
-    // Getters e Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    // Mapeamento das anotações nos métodos Getter (estratégia limpa para herança JPA)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Override
+    public Long getId() { return super.getId(); }
 
-    public String getUsername() { return username; }
-    public void setUsername(String username) { this.username = username; }
+    @Column(unique = true, nullable = false)
+    @Override
+    public String getUsername() { return super.getUsername(); }
 
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
+    @Column(unique = true, nullable = false)
+    @Override
+    public String getEmail() { return super.getEmail(); }
 
+    // Getter e Setter específicos da aplicação concreta
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
 
-    public String getAvatarPath() { return avatarPath; }
-    public void setAvatarPath(String avatarPath) { this.avatarPath = avatarPath; }
+    // Métodos de conveniência para a sua aplicação continuar usando o Enum sem quebrar nada
+    @Transient // Informa ao JPA para não tentar salvar este método no banco
+    public LanguageLevel getCurrentLevelEnum() {
+        return this.getCurrentLevel() != null ? LanguageLevel.valueOf(this.getCurrentLevel()) : null;
+    }
 
-    public LanguageLevel getCurrentLevel() { return currentLevel; }
-    public void setCurrentLevel(LanguageLevel currentLevel) { this.currentLevel = currentLevel; }
-
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public void setCurrentLevelEnum(LanguageLevel level) {
+        this.setCurrentLevel(level != null ? level.name() : null);
+    }
 }

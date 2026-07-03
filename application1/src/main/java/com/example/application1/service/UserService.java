@@ -35,7 +35,7 @@ public class UserService {
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
         user.setPassword(request.getPassword()); 
-        user.setCurrentLevel(request.getLevel());
+        user.setCurrentLevelEnum(request.getLevel());
         User savedUser = userRepository.save(user);
 
         UserProgress progress = new UserProgress();
@@ -50,7 +50,7 @@ public class UserService {
                 savedUser.getId(),
                 savedUser.getUsername(),
                 savedUser.getEmail(),
-                savedUser.getCurrentLevel()
+                savedUser.getCurrentLevelEnum()
         );
     }
 
@@ -66,7 +66,7 @@ public class UserService {
                 user.getId(),
                 user.getUsername(),
                 user.getEmail(),
-                user.getCurrentLevel()
+                user.getCurrentLevelEnum()
         );
     }
 }

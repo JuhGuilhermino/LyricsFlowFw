@@ -5,8 +5,8 @@ POST {{baseUrl}}/register
 Content-Type: application/json
 
 {
-  "username": "julia",
-  "email": "julia@test.com",
+  "username": "lud",
+  "email": "lud@test.com",
   "password": "SenhaSegura123",
   "level": "BEGINNER"
 }
@@ -27,7 +27,7 @@ POST {{baseUrl}}/login
 Content-Type: application/json
 
 {
-  "email": "julia@test.com",
+  "email": "lud@test.com",
   "password": "SenhaSegura123"
 }
 

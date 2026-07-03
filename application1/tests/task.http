@@ -21,7 +21,7 @@ Content-Type: application/json
 
 {
     "userId": 11,
-    "songId": 2
+    "songId": 3
 }
 
 ### Enviar resposta
@@ -29,20 +29,20 @@ POST {{baseUrl}}/submit
 Content-Type: application/json
 
 {
-    "taskId": 26,
-    "userId": 10,
+    "taskId": 27,
+    "userId": 11,
     "userAnswers": [
+        "desert",
+        "wind",
+        "sme",
+        "light",
+        "heavy",
+        "doorway",
+        "bell",
         "heaven",
-        "easy",
-        "sky",
-        "people",
-        "living",
-        "countries",
-        "hard",
-        "peace",
-        "dreamer",
-        "hope",
-        "join",
-        "world"
+        "place",
+        "room",
+        "friends",
+        "remember"
     ]
 }

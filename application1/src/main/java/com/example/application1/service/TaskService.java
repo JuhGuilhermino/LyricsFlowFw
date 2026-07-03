@@ -61,7 +61,7 @@ public class TaskService {
 
 
     private TaskGenerateResponseDTO generateNewTaskWithGemini(User user, Song song) {
-        String userLevel = user.getCurrentLevel() != null ? user.getCurrentLevel().name() : "BEGINNER";
+        String userLevel = user.getCurrentLevel() != null ? user.getCurrentLevel() : "BEGINNER";
         
         TaskGenerateResponseDTO exercise = this.geminiClient.generateTask(song.getLyrics(), userLevel);
 
