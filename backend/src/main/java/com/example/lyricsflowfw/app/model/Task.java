@@ -1,68 +1,21 @@
 package com.example.lyricsflowfw.app.model;
 
+import com.example.lyricsflowfw.core.domain.BaseTask;
+import com.example.lyricsflowfw.app.model.Song;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 @Table(name = "tasks")
-public class Task {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Task extends BaseTask<User, Song> {
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    @ManyToOne
-    @JoinColumn(name = "song_id")  // referencia para o conteúdo, mas é ponto fixo
-    private Song song;
-
-    @Column(name = "score")
-    private Float score;
-
-    @Column(name = "masked_lyrics", columnDefinition = "TEXT") // guarda gabarito da atividade - PONTO FIXO
-    private String maskedLyrics;
-
-    @Column(name = "target_words") // topicos dos flashcards -> PONTO FIXO
-    private List<String> targetWords;
-
-    private LocalDateTime completedAt;
-
-    // Construtor Padrão
-    public Task() {}
-
-    // Construtor Completo
-    public Task(Long id, User user, Song song, Float score, String maskedLyrics, List<String> targetWords, LocalDateTime completedAt) {
-        this.id = id;
-        this.user = user;
-        this.song = song;
-        this.score = score;
-        this.maskedLyrics = maskedLyrics;
-        this.targetWords = targetWords;
-        this.completedAt = completedAt;
+    public Task() {
+        super();
     }
 
-    // Getters e Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
-
-    public Song getSong() { return song; }
-    public void setSong(Song song) { this.song = song; }
-
-    public Float getScore() { return score; }
-    public void setScore(Float score) { this.score = score; }
-
-    public String getMaskedLyrics() { return maskedLyrics; }
-    public void setMaskedLyrics(String maskedLyrics) { this.maskedLyrics = maskedLyrics; }
-
-    public List<String> getTargetWords() { return targetWords; }
-    public void setTargetWords(List<String> targetWords) { this.targetWords = targetWords; }
-
-    public LocalDateTime getCompletedAt() { return completedAt; }
-    public void setCompletedAt(LocalDateTime completedAt) { this.completedAt = completedAt; }
+    // Construtor atualizado repassando os parâmetros ajustados para o super
+    public Task(Long id, User user, Song song, Float score, String answerKey, List<String> targetWords, LocalDateTime completedAt) {
+        super(id, user, song, score, answerKey, targetWords, completedAt);
+    }
 }
