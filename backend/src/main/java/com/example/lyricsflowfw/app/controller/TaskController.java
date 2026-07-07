@@ -1,12 +1,12 @@
 package com.example.lyricsflowfw.app.controller;
 
+import com.example.lyricsflowfw.app.dto.TaskGenerationRequestDTO;
 import com.example.lyricsflowfw.app.model.Song;
 import com.example.lyricsflowfw.app.model.Task;
 import com.example.lyricsflowfw.app.model.User;
 import com.example.lyricsflowfw.app.repository.SongRepository;
 import com.example.lyricsflowfw.app.repository.UserRepository;
 import com.example.lyricsflowfw.app.service.TaskService;
-import com.example.lyricsflowfw.core.domain.BaseLearningProfile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,31 +19,25 @@ public class TaskController {
     private final UserRepository userRepository;
     private final SongRepository songRepository;
 
-    // Injeção de dependências via construtor
     public TaskController(TaskService taskService, UserRepository userRepository, SongRepository songRepository) {
         this.taskService = taskService;
         this.userRepository = userRepository;
         this.songRepository = songRepository;
     }
 
-    @PostMapping("/tesk-generation")
-    public ResponseEntity<?> testTaskGeneration(
-            @RequestParam Long userId,
-            @RequestParam Long songId,
-            @RequestBody BaseLearningProfile profile) {
-        
+    @PostMapping("/task-generation")
+    public ResponseEntity<?> testTaskGeneration(@RequestBody TaskGenerationRequestDTO request) {
         try {
-            // 1. Recupera o usuário e a música fictícios que você já inseriu no banco para o teste
-            User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new IllegalArgumentException("Usuário com ID " + userId + " não encontrado."));
+            // 1. Recupera os dados de dentro do novo DTO unificado
+            User user = userRepository.findById(request.userId())
+                    .orElseThrow(() -> new IllegalArgumentException("Usuário com ID " + request.userId() + " não encontrado."));
 
-            Song song = songRepository.findById(songId)
-                    .orElseThrow(() -> new IllegalArgumentException("Música com ID " + songId + " não encontrada."));
+            Song song = songRepository.findById(request.songId())
+                    .orElseThrow(() -> new IllegalArgumentException("Música com ID " + request.songId() + " não encontrada."));
 
-            // 2. Aciona o serviço que orquestra a estratégia GapFillingTaskStrategy com o Gemini
-            Task generatedTask = taskService.generateNewTaskWithGemini(user, song, profile);
+            // 2. Passa o profile contido no DTO para o serviço
+            Task generatedTask = taskService.generateNewTaskWithGemini(user, song, request.profile());
 
-            // 3. Retorna a tarefa montada e persistida com HTTP 201 Created
             return ResponseEntity.status(HttpStatus.CREATED).body(generatedTask);
 
         } catch (IllegalArgumentException e) {

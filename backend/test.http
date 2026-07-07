@@ -49,14 +49,16 @@ GET {{baseUrl}}/song
 Accept: application/json
 
 
-### TAREFA: gerar darefa de uma música
+### TAREFA: gerar tarefa de uma música
 POST {{baseUrl}}/tasks/task-generation
 Content-Type: application/json
 
 {
     "userId": 11,
     "songId": 10,
-    "languageLevel": "INTERMEDIATE"
+    "profile": {
+        "languageLevel": "INTERMEDIATE"
+    }
 }
 
 

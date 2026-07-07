@@ -22,7 +22,7 @@ public class TaskService {
 
 
     public Task generateNewTaskWithGemini(User user, Song song, BaseLearningProfile profile) {
-        // 1. Executa a inteligência artificial encapsulada na estratégia
+    
         AiTaskResponseDTO aiResponse = gapFillingTaskStrategy.generateTask(song, profile);
 
         if (aiResponse == null) {

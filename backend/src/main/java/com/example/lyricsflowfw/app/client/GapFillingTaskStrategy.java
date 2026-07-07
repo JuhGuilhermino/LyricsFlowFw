@@ -28,12 +28,15 @@ public class GapFillingTaskStrategy implements AiTaskGeneratorStrategy<Song> {
 
     @Override
     public AiTaskResponseDTO generateTask(Song content, BaseLearningProfile profile) {
-        // Converte a interface genérica do core para o perfil completo específico da aplicação
+        // Converte a interface genérica do core para o perfil da aplicação
         LearningProfile appProfile = (LearningProfile) profile;
 
         String lyrics = content.getLyrics();
+        
+        // Extrai o nível do enum de forma segura
         String currentLevelStr = appProfile.getLanguageLevel() != null ? appProfile.getLanguageLevel().name() : "BEGINNER";
 
+        // REMOVIDOS OS %s DE FOCUS AREA DO PROMPT PARA EVITAR O ERRO DE FORMATO
         String prompt = """
             Você é um professor de inglês especialista no método Cloze Test (exercício de preencher lacunas).
             Sua tarefa é receber a letra de uma música e o nível de proficiência do aluno (%s).
@@ -43,18 +46,17 @@ public class GapFillingTaskStrategy implements AiTaskGeneratorStrategy<Song> {
             2. Substitua essas palavras na letra da música pela tag '_'.
             3. Guarde as palavras originais que foram removidas em uma lista ordenada (gabarito).
             4. No máximo 12 lacunas por música.
-            5. De preferência para transformar em lacunas elementos relacionados a área de foco: %s.
-            6. Não adicione saudações ou textos explicativos, retorne estritamente a estrutura de dados solicitada.
+            5. Não adicione saudações ou textos explicativos, retorne estritamente a estrutura de dados solicitada.
             
             Letra da música de entrada:
             %s
 
             Você DEVE responder EXCLUSIVAMENTE um objeto JSON com a seguinte estrutura:
             {
-              "maskedLyrics": "Letra da música com as lacunas _",
-              "targetWords": ["palavra1", "palavra2", "palavra3"]
+            "maskedLyrics": "Letra da música com as lacunas _",
+            "targetWords": ["palavra1", "palavra2", "palavra3"]
             }
-            """.formatted(currentLevelStr, currentLevelStr, lyrics);
+            """.formatted(currentLevelStr, currentLevelStr, lyrics); // Exatamente 3 argumentos para 3 '%s'
 
         try {
             String responseJson = this.chatModel.call(prompt);
