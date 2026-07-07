@@ -1,12 +1,9 @@
 package com.example.lyricsflowfw.core.domain;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
-import java.util.List;
 
 @MappedSuperclass
-public abstract class BaseTask<U extends BaseUser, S extends BaseSong> {
-    
+public abstract class BaseTask<U extends BaseUser, C extends BaseContent> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -15,54 +12,74 @@ public abstract class BaseTask<U extends BaseUser, S extends BaseSong> {
     @JoinColumn(name = "user_id")
     private U user;
 
+    // ANTES: private S song;
+    // AGORA: Aponta para o conteúdo genérico (pode ser Song ou UserText)
     @ManyToOne
-    @JoinColumn(name = "song_id")
-    private S song;
+    @JoinColumn(name = "content_id") 
+    private C content;
 
-    @Column(name = "score")
     private Float score;
+    
+    @Column(columnDefinition = "TEXT")
+    private String generatedActivity; // O corpo da atividade gerada pela IA
 
-    @Column(name = "masked_lyrics", columnDefinition = "TEXT")
-    private String maskedLyrics;
+    @Column(columnDefinition = "TEXT")
+    private String answerKey;
 
-    @ElementCollection // Garante o mapeamento da lista simples de Strings como colunas secundárias
-    @CollectionTable(name = "task_target_words", joinColumns = @JoinColumn(name = "task_id"))
-    @Column(name = "target_word")
-    private List<String> targetWords;
-
-    private LocalDateTime completedAt;
-
-    public BaseTask() {}
-
-    public BaseTask(Long id, U user, S song, Float score, String maskedLyrics, List<String> targetWords, LocalDateTime completedAt) {
+    public BaseTask(Long id, U user, C content, Float score, String generatedActivity, String answerKey) {
         this.id = id;
         this.user = user;
-        this.song = song;
+        this.content = content;
         this.score = score;
-        this.maskedLyrics = maskedLyrics;
-        this.targetWords = targetWords;
-        this.completedAt = completedAt;
+        this.generatedActivity = generatedActivity;
+        this.answerKey = answerKey;
     }
 
-    // Getters e Setters Genéricos
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public U getUser() { return user; }
-    public void setUser(U user) { this.user = user; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public S getSong() { return song; }
-    public void setSong(S song) { this.song = song; }
+    public U getUser() {
+        return user;
+    }
 
-    public Float getScore() { return score; }
-    public void setScore(Float score) { this.score = score; }
+    public void setUser(U user) {
+        this.user = user;
+    }
 
-    public String getMaskedLyrics() { return maskedLyrics; }
-    public void setMaskedLyrics(String maskedLyrics) { this.maskedLyrics = maskedLyrics; }
+    public C getContent() {
+        return content;
+    }
 
-    public List<String> getTargetWords() { return targetWords; }
-    public void setTargetWords(List<String> targetWords) { this.targetWords = targetWords; }
+    public void setContent(C content) {
+        this.content = content;
+    }
 
-    public LocalDateTime getCompletedAt() { return completedAt; }
-    public void setCompletedAt(LocalDateTime completedAt) { this.completedAt = completedAt; }
+    public Float getScore() {
+        return score;
+    }
+
+    public void setScore(Float score) {
+        this.score = score;
+    }
+
+    public String getGeneratedActivity() {
+        return generatedActivity;
+    }
+
+    public void setGeneratedActivity(String generatedActivity) {
+        this.generatedActivity = generatedActivity;
+    }
+
+    public String getAnswerKey() {
+        return answerKey;
+    }
+
+    public void setAnswerKey(String answerKey) {
+        this.answerKey = answerKey;
+    }
 }

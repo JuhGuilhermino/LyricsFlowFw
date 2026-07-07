@@ -1,23 +1,54 @@
+/*
 package com.example.lyricsflowfw.app.service;
 
-import com.example.lyricsflowfw.app.client.GeminiClient;
-import com.example.lyricsflowfw.app.dto.*;
-import com.example.lyricsflowfw.app.model.*;
+import com.example.lyricsflowfw.app.client.GapFillingTaskStrategy;
+import com.example.lyricsflowfw.app.model.Song;
+import com.example.lyricsflowfw.app.model.Task;
+import com.example.lyricsflowfw.app.model.User;
 import com.example.lyricsflowfw.app.repository.TaskRepository;
-import com.example.lyricsflowfw.app.repository.FlashcardRepository;
-import com.example.lyricsflowfw.app.repository.UserRepository;
-import com.example.lyricsflowfw.app.repository.SongRepository;
-
-import jakarta.transaction.Transactional;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
+import com.example.lyricsflowfw.core.domain.LearningProfile;
+import com.example.lyricsflowfw.core.dto.AiTaskResponseDTO;
 import org.springframework.stereotype.Service;
 
+@Service
+public class TaskService {
+
+    private final GapFillingTaskStrategy gapFillingTaskStrategy;
+    private final TaskRepository taskRepository;
+
+    public TaskService(GapFillingTaskStrategy gapFillingTaskStrategy, TaskRepository taskRepository) {
+        this.gapFillingTaskStrategy = gapFillingTaskStrategy;
+        this.taskRepository = taskRepository;
+    }
+
+
+    public Task generateNewTaskWithGemini(User user, Song song, LearningProfile profile) {
+        // 1. Executa a inteligência artificial encapsulada na estratégia
+        AiTaskResponseDTO aiResponse = gapFillingTaskStrategy.generateTask(song, profile);
+
+        if (aiResponse == null) {
+            throw new RuntimeException("Não foi possível gerar a atividade com a IA.");
+        }
+
+        // 2. Instancia a entidade concreta Task passando os parâmetros exigidos
+        Task newTask = new Task(
+            null,
+            user,
+            song,
+            0.0f, // Nota padrão inicial
+            aiResponse.generatedActivity(),
+            aiResponse.answerKey()
+        );
+
+        // 3. Salva e retorna o registro persistido no banco de dados
+        return taskRepository.save(newTask);
+    }
+}
+*/
+
+
+
+/*
 @Service
 public class TaskService {
     private final TaskRepository taskRepository;
@@ -171,3 +202,5 @@ public class TaskService {
 
 
 }
+*/
+

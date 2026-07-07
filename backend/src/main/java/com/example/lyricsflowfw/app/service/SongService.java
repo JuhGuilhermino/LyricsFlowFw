@@ -2,50 +2,59 @@ package com.example.lyricsflowfw.app.service;
 
 import com.example.lyricsflowfw.app.dto.MusicResponseDTO;
 import com.example.lyricsflowfw.app.model.Song;
+import com.example.lyricsflowfw.app.model.User;
 import com.example.lyricsflowfw.app.repository.SongRepository;
 import com.example.lyricsflowfw.app.repository.UserRepository;
-import com.example.lyricsflowfw.core.service.BaseSongService;
-import com.example.lyricsflowfw.core.service.ExternalMusicProvider;
+import com.example.lyricsflowfw.core.service.ContentService;
+import com.example.lyricsflowfw.core.service.ExternalContentProvider;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class SongService extends BaseSongService<Song, com.example.lyricsflowfw.app.model.User> {
+public class SongService extends ContentService<Song, User> {
 
-    // Injeta os componentes concretos da aplicação repassando ao super() do framework
+    // Construtor injetando os repositórios da aplicação e a lista dinâmica de provedores externos
     public SongService(UserRepository userRepository, 
                        SongRepository songRepository,
-                       ExternalMusicProvider<Song> externalMusicProvider) {
-        super(userRepository, songRepository, externalMusicProvider);
+                       List<ExternalContentProvider<Song>> contentProviders) {
+        super(userRepository, songRepository, contentProviders);
     }
 
-    // Implementação fixa adaptada aos DTOs específicos da aplicação
+    /**
+     * Recupera todas as músicas do banco de dados (reaproveitando a lógica do core)
+     * e converte o resultado para a lista de DTOs esperada pela aplicação.
+     */
     public List<MusicResponseDTO> listAllSongs() {
-        List<Song> songs = super.findAllSongsEntities();
+        // Invoca o método fixo herdado da superclasse ContentService
+        List<Song> songs = super.findAllContentEntities();
 
-        return songs.stream().map(this::convertToDTO).collect(Collectors.toList());
+        return songs.stream().map(song -> {
+            MusicResponseDTO dto = new MusicResponseDTO();
+            dto.setId(song.getId());
+            dto.setTitle(song.getTitle());
+            dto.setArtist(song.getArtist()); // Atributo do ponto flexível mapeado
+            dto.setLyrics(song.getLyrics());
+            return dto;
+        }).collect(Collectors.toList());
     }
 
-    // PONTO FLEXÍVEL - Executa a busca externa e já devolve o DTO da aplicação
-    public Optional<MusicResponseDTO> findAndSaveExternalSong(String title, String artist) {
-        // Chama o método estruturado no core, que por sua vez executa o GeniusMusicProvider
-        return super.searchExternalSong(title, artist)
-                .map(songEntity -> {
-                    // Opcional: Salvar a música encontrada no banco de dados local automaticamente
-                    Song savedSong = this.songRepository.save(songEntity);
-                    return convertToDTO(savedSong);
+    /**
+     * PONTO FLEXÍVEL: Orquestra a busca de música em provedores externos (ex: Genius).
+     * Se encontrado, converte e retorna o DTO pronto para a aplicação.
+     */
+    public Optional<MusicResponseDTO> fetchAndConvertExternalSong(String title, String artist) {
+        // Dispara o resolvedor de provedores do core passando "API_GENIUS" como gatilho do sourceType
+        return super.searchExternalContent(title, "API_GENIUS", artist)
+                .map(song -> {
+                    MusicResponseDTO dto = new MusicResponseDTO();
+                    dto.setId(song.getId());
+                    dto.setTitle(song.getTitle());
+                    dto.setArtist(song.getArtist());
+                    dto.setLyrics(song.getLyrics());
+                    return dto;
                 });
-    }
-
-    // Auxiliar para conversão de DTO
-    private MusicResponseDTO convertToDTO(Song song) {
-        MusicResponseDTO dto = new MusicResponseDTO();
-        dto.setId(song.getId());
-        dto.setTitle(song.getTitle());
-        dto.setArtist(song.getArtist()); // Ponto variável mapeado com sucesso
-        dto.setLyrics(song.getLyrics());
-        return dto;
     }
 }
