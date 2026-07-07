@@ -40,20 +40,6 @@ public class TaskService {
     }
 
     
-    public List<MusicResponseDTO> listAllSongs() {
-        List<Song> songs = this.songRepository.findAll();
-
-        return songs.stream().map(song -> {
-            MusicResponseDTO dto = new MusicResponseDTO();
-            dto.setId(song.getId());
-            dto.setTitle(song.getTitle());
-            dto.setArtist(song.getArtist());
-            dto.setLyrics(song.getLyrics());
-            return dto;
-        }).collect(Collectors.toList());
-    }
-
-
     private TaskGenerateResponseDTO getExistingTaskFromDatabase(Task task) {
         TaskGenerateResponseDTO cachedTask = new TaskGenerateResponseDTO();
         cachedTask.setTaskId(task.getId());

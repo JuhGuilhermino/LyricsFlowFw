@@ -8,11 +8,12 @@ public class Song {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String title;
-    private String artist;
+    private String title;  
+    private String artist; // PONTO FLEXÍVEL
+    // referencia bibliografia
 
     @Column(columnDefinition = "TEXT")
-    private String lyrics;
+    private String lyrics;  // vira conteúdo
 
     // Construtor Padrão
     public Song() {}

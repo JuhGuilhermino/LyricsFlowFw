@@ -16,16 +16,16 @@ public class Task {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "song_id")
+    @JoinColumn(name = "song_id")  // referencia para o conteúdo, mas é ponto fixo
     private Song song;
 
     @Column(name = "score")
     private Float score;
 
-    @Column(name = "masked_lyrics", columnDefinition = "TEXT")
+    @Column(name = "masked_lyrics", columnDefinition = "TEXT") // guarda gabarito da atividade - PONTO FIXO
     private String maskedLyrics;
 
-    @Column(name = "target_words")
+    @Column(name = "target_words") // topicos dos flashcards -> PONTO FIXO
     private List<String> targetWords;
 
     private LocalDateTime completedAt;

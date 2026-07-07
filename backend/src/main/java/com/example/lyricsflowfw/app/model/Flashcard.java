@@ -16,7 +16,7 @@ public class Flashcard {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private String word;
+    private String word; // tema
 
     @Column(name = "review_interval") // Evita usar palavra reservada 'interval' no banco SQL
     private Integer interval;

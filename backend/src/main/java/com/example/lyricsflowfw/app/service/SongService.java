@@ -34,5 +34,5 @@ public class SongService {
         }).collect(Collectors.toList());
     }
 
-    // Criar um método para buscar músicas
+    // PONTO FLEXÍVEL - Criar um método para buscar músicas
 }

@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 //import java.util.Optional;
 
 @Service
-public class UserService { 
+public class UserService {  // PONTO FIXO
     private final UserRepository userRepository;
     private final UserProgressRepository userProgressRepository;
 

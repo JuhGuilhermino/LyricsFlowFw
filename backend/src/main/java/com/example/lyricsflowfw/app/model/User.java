@@ -1,70 +1,28 @@
 package com.example.lyricsflowfw.app.model;
 
+import com.example.lyricsflowfw.core.domain.BaseUser;
+import com.example.lyricsflowfw.app.enums.LanguageLevel;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
-import com.example.lyricsflowfw.app.enums.LanguageLevel;
 
 @Entity
-@Table(name = "users")
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(unique = true, nullable = false)
-    private String username;
-
-    @Column(unique = true, nullable = false)
-    private String email;
-
-    @Column(nullable = false)
-    private String password;
-
-    private String avatarPath;
+@Table(name = "users") // Aqui a tabela física do banco de dados é realmente criada
+public class User extends BaseUser {
 
     @Enumerated(EnumType.STRING)
-    private LanguageLevel currentLevel;
+    private LanguageLevel currentLevel; // Ponto Variável adicionado por este app
 
-    private LocalDateTime createdAt;
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
+    public User() {
+        super();
     }
 
-    // Construtor Padrão
-    public User() {}
-
-    // Construtor Completo
+    // Construtor completo utilizando os campos da classe pai
     public User(Long id, String username, String email, String password, String avatarPath, LanguageLevel currentLevel, LocalDateTime createdAt) {
-        this.id = id;
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.avatarPath = avatarPath;
+        super(id, username, email, password, avatarPath, createdAt);
         this.currentLevel = currentLevel;
-        this.createdAt = createdAt;
     }
 
-    // Getters e Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public String getUsername() { return username; }
-    public void setUsername(String username) { this.username = username; }
-
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
-
-    public String getPassword() { return password; }
-    public void setPassword(String password) { this.password = password; }
-
-    public String getAvatarPath() { return avatarPath; }
-    public void setAvatarPath(String avatarPath) { this.avatarPath = avatarPath; }
-
+    // Getter e Setter apenas do ponto variável
     public LanguageLevel getCurrentLevel() { return currentLevel; }
     public void setCurrentLevel(LanguageLevel currentLevel) { this.currentLevel = currentLevel; }
-
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }
