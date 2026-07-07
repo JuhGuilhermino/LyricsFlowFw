@@ -1,9 +1,9 @@
 package com.example.lyricsflowfw.app.model;
 
-import com.example.lyricsflowfw.core.domain.BaseUser;
-import com.example.lyricsflowfw.app.enums.LanguageLevel;
+//import com.example.lyricsflowfw.core.domain.BaseUser;
+//import com.example.lyricsflowfw.app.enums.LanguageLevel;
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+//import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")

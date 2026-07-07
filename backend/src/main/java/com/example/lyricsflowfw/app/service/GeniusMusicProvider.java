@@ -3,27 +3,22 @@ package com.example.lyricsflowfw.app.service;
 import com.example.lyricsflowfw.app.model.Song;
 import com.example.lyricsflowfw.core.service.ExternalContentProvider;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestClient;
-import java.util.Map;
-import java.util.List;
 import java.util.Optional;
 
 @Component
 public class GeniusMusicProvider implements ExternalContentProvider<Song> {
 
-    private final RestClient restClient;
-
-    @Value("${genius.api.token}")
-    private String apiToken;
-
-    public GeniusMusicProvider() {
-        this.restClient = RestClient.builder()
-                .baseUrl("https://api.genius.com")
-                .build();
-    }
-
     @Override
     public Optional<Song> fetchExternalContent(String sourceIdentifier, String sourceType, String... extraParams) {
+        // No contexto desta API, o identificador principal é o próprio título da música
+        String title = sourceIdentifier;
+        String artist = (extraParams.length > 0) ? extraParams[0] : "Desconhecido";
+        
+        // Exemplo fictício de integração externa (Consumindo a API do Genius)
+        String mockLyrics = "Letra da música " + title + " do artista " + artist + " (Consumida via API Genius)";
+        
+        // Retorna a entidade de música preenchida
+        return Optional.of(new Song(null, title, artist, mockLyrics));
     }
 
     @Override

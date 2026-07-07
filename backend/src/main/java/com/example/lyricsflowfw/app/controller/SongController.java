@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import java.util.Optional;
+//import java.util.Optional;
 
 @RestController
 @RequestMapping("/song")
@@ -30,6 +30,7 @@ public class SongController {
         }
     }
 
+    /*
     @PostMapping("/search")
     public ResponseEntity<?> findOrSaveMusic(@RequestBody MusicRequestDTO request) {
         try {
@@ -50,4 +51,6 @@ public class SongController {
                     .body("Ocorreu um erro ao processar a requisição da música: " + e.getMessage());
         }
     }
+    */
+    
 } 

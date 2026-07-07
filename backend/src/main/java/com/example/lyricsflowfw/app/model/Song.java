@@ -22,7 +22,9 @@ public class Song extends BaseContent {
     // Construtor Completo repassando os pontos fixos para o super() do framework
     public Song(Long id, String title, String artist, String lyrics) {
         super(id, title); // Inicializa id e title na superclasse BaseContent
-
+        this.artist = artist;
+        this.lyrics = lyrics;
+    }
 
     // Getters e Setters apenas dos atributos locais da aplicação
     public String getArtist() { 
