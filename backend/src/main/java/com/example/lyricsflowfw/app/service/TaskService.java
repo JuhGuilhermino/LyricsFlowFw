@@ -48,23 +48,40 @@ public class TaskService extends BaseTaskService<User, Song, Task> {
     @Override
     protected float calculateScore(List<String> answerKey, List<String> userAnswers) {
         if (answerKey == null || answerKey.isEmpty()) {
+            System.out.println("[SCORE] Gabarito vazio ou nulo!");
             return 0.0f;
         }
 
         int totalQuestions = answerKey.size();
         int correctCount = 0;
 
+        System.out.println("[SCORE] Iniciando cálculo. Total de lacunas: " + totalQuestions);
+        System.out.println("[SCORE] Respostas do usuário recebidas: " + userAnswers);
+
         for (int i = 0; i < totalQuestions; i++) {
+            String correctAnswer = answerKey.get(i);
+            
+            // Proteção contra respostas enviadas a menos pelo usuário
             if (userAnswers != null && i < userAnswers.size() && userAnswers.get(i) != null) {
                 String cleanUserAnswer = userAnswers.get(i).trim().toLowerCase();
-                String cleanCorrectAnswer = answerKey.get(i).trim().toLowerCase();
+                String cleanCorrectAnswer = correctAnswer.trim().toLowerCase();
+
+                System.out.println("[SCORE] Comparando Posição [" + i + "]: Esperado='" + cleanCorrectAnswer + "' | Enviado='" + cleanUserAnswer + "'");
 
                 if (cleanUserAnswer.equals(cleanCorrectAnswer)) {
                     correctCount++;
+                    System.out.println("[SCORE] -> ACERTOU!");
+                } else {
+                    System.out.println("[SCORE] -> ERROU!");
                 }
+            } else {
+                System.out.println("[SCORE] Posição [" + i + "]: Usuário não enviou resposta para esta lacuna.");
             }
         }
-        return ((float) correctCount / totalQuestions) * 10.0f;
+
+        float finalScore = ((float) correctCount / totalQuestions) * 10.0f;
+        System.out.println("[SCORE] Resultado Final do Cálculo: " + finalScore + "/10.0");
+        return finalScore;
     }
 
     // 3) PONTOS FIXOS ADAPTADOS E SEPARADOS DE ACORDO COM O SEU BANCO ORIGINAL
@@ -75,8 +92,8 @@ public class TaskService extends BaseTaskService<User, Song, Task> {
         Song song = ((SongRepository) contentRepository).findById(songId)
                 .orElseThrow(() -> new IllegalArgumentException("Música não encontrada."));
 
-        // Ajustado para refletir o ContentId do framework corrigindo o bug anterior
-        Optional<Task> existingTask = concreteTaskRepository.findByUserIdAndContentId(userId, songId);
+        // CORREÇÃO: Utiliza o método mapeado no BaseTaskRepository ordenado de forma decrescente por ID
+        Optional<Task> existingTask = concreteTaskRepository.findFirstByUserIdAndContentIdOrderByIdDesc(userId, songId);
         if (existingTask.isPresent()) {
             return existingTask.get();
         }
@@ -85,21 +102,30 @@ public class TaskService extends BaseTaskService<User, Song, Task> {
     }
 
     @Transactional
-    public void submitTask(Long taskId, List<String> userAnswers) {
+    public Task submitTask(Long taskId, List<String> userAnswers) {
         Task task = concreteTaskRepository.findById(taskId)
                 .orElseThrow(() -> new IllegalArgumentException("Tarefa não encontrada!"));
         
-        List<String> answerKey = Arrays.asList(task.getAnswerKey().split(",\\s*"));
+        // Limpeza estendida de metadados residuais que a IA costuma colocar na String do gabarito
+        String cleanKey = task.getAnswerKey()
+                .replace("[", "")
+                .replace("]", "")
+                .replace("\"", "")
+                .replace("'", "")
+                .trim();
+                
+        List<String> answerKey = Arrays.asList(cleanKey.split(",\\s*"));
+
         float finalScore = calculateScore(answerKey, userAnswers);
+        task.setScore(finalScore);
         
-        // 1. Altera o valor no objeto atual
-        task.setScore(finalScore); 
+        // CORREÇÃO: Altera de save() para saveAndFlush() forçando a sincronização imediata
+        // das colunas herdadas do framework na tabela física do PostgreSQL
+        Task savedTask = concreteTaskRepository.saveAndFlush(task); 
         
-        // 2. ATENÇÃO AQUI: O método save() retorna a instância que foi de fato persistida!
-        Task savedTask = concreteTaskRepository.save(task); 
-        
-        // 3. Use o savedTask para continuar o fluxo, garantindo que o banco fechou a operação
         createFlashcardsForTask(savedTask.getUser(), answerKey);
+        
+        return savedTask; 
     }
 
     private void createFlashcardsForTask(User user, List<String> answerKey) {

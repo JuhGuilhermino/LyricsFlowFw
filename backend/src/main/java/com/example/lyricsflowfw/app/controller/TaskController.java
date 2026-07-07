@@ -1,6 +1,6 @@
 package com.example.lyricsflowfw.app.controller;
 
-import com.example.lyricsflowfw.app.dto.TaskGenerationRequestDTO;
+import com.example.lyricsflowfw.app.dto.TaskStartRequestDTO;
 import com.example.lyricsflowfw.app.model.Task;
 import com.example.lyricsflowfw.app.service.TaskService;
 import org.springframework.http.HttpStatus;
@@ -20,42 +20,66 @@ public class TaskController {
         this.taskService = taskService;
     }
 
-    /**
-     * Endpoint para Geração ou Recuperação de Exercícios (Cloze Test) via IA.
-     */
-    @PostMapping("/task-generation")
-    public ResponseEntity<?> testTaskGeneration(@RequestBody TaskGenerationRequestDTO request) {
+    @PostMapping("/start")
+    public ResponseEntity<?> startTask(@RequestBody TaskStartRequestDTO request) {
         try {
-            // Invoca o fluxo completo: busca cache ou gera com a estratégia de IA encapsulada
-            Task task = taskService.generateTask(request.userId(), request.songId(), request.profile());
-            
-            return ResponseEntity.status(HttpStatus.CREATED).body(task);
+            // Validação simples defensiva
+            if (request.getProfile() == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("O perfil de aprendizado (profile) com o nível de idioma é obrigatório.");
+            }
+
+            // Invoca o service passando os três parâmetros necessários da nova arquitetura
+            Task exercise = this.taskService.generateTask(
+                request.getUserId(), 
+                request.getSongId(), 
+                request.getProfile()
+            );
+
+            // Retorna o exercício gerado (ou recuperado do banco) com status 200 OK
+            return ResponseEntity.ok(exercise);
 
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Erro ao processar a requisição de IA: " + e.getMessage());
+                    .body("Ocorreu um erro ao gerar o exercício: " + e.getMessage());
         }
     }
 
     /**
-     * Endpoint para Submissão e Correção do Exercício.
-     * Testa o ponto flexível calculateScore e a criação de Flashcards.
+     * Endpoint para Submissão, Correção e Encerramento do Exercício.
+     * Recebe as respostas do usuário, calcula a nota e retorna o resultado detalhado.
      */
     @PostMapping("/{taskId}/submit")
     public ResponseEntity<?> submitTaskResponse(
             @PathVariable Long taskId,
             @RequestBody List<String> userAnswers) {
         try {
-            taskService.submitTask(taskId, userAnswers);
-            return ResponseEntity.ok("Respostas submetidas e corrigidas com sucesso!");
-            
+            if (userAnswers == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("A lista de respostas (userAnswers) não pode ser nula.");
+            }
+
+            // 1. Invoca a regra de negócio completa (calcula, salva e gera flashcards)
+            // Certifique-se de que o seu método submitTask no Service foi atualizado para retornar a Task (ou o score float)
+            Task updatedTask = this.taskService.submitTask(taskId, userAnswers);
+
+            // 2. Monta uma estrutura JSON limpa para responder ao usuário/frontend
+            java.util.Map<String, Object> response = new java.util.HashMap<>();
+            response.put("taskId", taskId);
+            response.put("score", updatedTask.getScore()); // Exibe o escore final (ex: 7.5)
+            response.put("status", "COMPLETED");
+            response.put("message", "Respostas corrigidas e pontuadas com sucesso!");
+
+            // 3. Retorna os dados com HTTP 200 OK
+            return ResponseEntity.ok(response);
+
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Erro ao processar a correção: " + e.getMessage());
+                    .body("Ocorreu um erro ao processar a correção da tarefa: " + e.getMessage());
         }
     }
 }

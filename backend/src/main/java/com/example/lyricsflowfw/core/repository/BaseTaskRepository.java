@@ -8,13 +8,12 @@ import org.springframework.data.repository.NoRepositoryBean;
 import java.util.List;
 import java.util.Optional;
 
-@NoRepositoryBean // Garante que o Spring não tentará criar um Bean desta interface genérica
+@NoRepositoryBean
 public interface BaseTaskRepository<T extends BaseTask<U, C>, U extends BaseUser, C extends BaseContent> 
         extends JpaRepository<T, Long> {
     
-    // Busca todas as tarefas pelo ID do usuário (parâmetro fixo)
     List<T> findByUserId(Long userId);
 
-    // Busca a tarefa combinando o ID do usuário e o ID da música (ambos mapeados na BaseTask)
-    Optional<T> findByUserIdAndContentId(Long userId, Long contentId);
+    // ADICIONADO: "OrderByIdDesc" garante pegar a atividade mais recente do cache se houver duplicidade
+    Optional<T> findFirstByUserIdAndContentIdOrderByIdDesc(Long userId, Long contentId);
 }
