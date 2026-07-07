@@ -1,42 +1,26 @@
 package com.example.lyricsflowfw.app.model;
 
+import com.example.lyricsflowfw.core.domain.BaseSong;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "songs")
-public class Song {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String title;  
-    private String artist; // PONTO FLEXÍVEL
-    // referencia bibliografia
+public class Song extends BaseSong {
 
-    @Column(columnDefinition = "TEXT")
-    private String lyrics;  // vira conteúdo
+    // PONTO FLEXÍVEL: Especificidade declarada apenas nesta aplicação
+    private String artist; 
 
-    // Construtor Padrão
-    public Song() {}
-
-    // Construtor Completo
-    public Song(Long id, String title, String artist, String lyrics) {
-        this.id = id;
-        this.title = title;
-        this.artist = artist;
-        this.lyrics = lyrics;
+    public Song() {
+        super();
     }
 
-    // Getters e Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    // Construtor Completo utilizando os campos da classe pai via super()
+    public Song(Long id, String title, String artist, String lyrics) {
+        super(id, title, lyrics);
+        this.artist = artist;
+    }
 
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
-
+    // Getter e Setter do campo variável
     public String getArtist() { return artist; }
     public void setArtist(String artist) { this.artist = artist; }
-
-    public String getLyrics() { return lyrics; }
-    public void setLyrics(String lyrics) { this.lyrics = lyrics; }
-
 }
