@@ -14,3 +14,4 @@ public interface BaseUserRepository<U extends BaseUser> extends JpaRepository<U,
     
     boolean existsByUsername(String username); 
 }
+

@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/song")
@@ -29,12 +30,19 @@ public class SongController {
         }
     }
 
-    /** ENDPOINT PARA PESQUISAR MÚSICAS    
     @PostMapping("/search")
     public ResponseEntity<?> findOrSaveMusic(@RequestBody MusicRequestDTO request) {
         try {
-            MusicResponseDTO response = this.taskService.searchSong(request.getTitle(), request.getArtist());
-            return ResponseEntity.ok(response);
+            Optional<MusicResponseDTO> responseOpt = 
+                this.songService.findAndSaveExternalSong(request.getTitle(), request.getArtist());
+
+            if (responseOpt.isPresent()) {
+                return ResponseEntity.ok(responseOpt.get());
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("Música não encontrada localmente nem nas plataformas externas.");
+            }
+
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
@@ -42,5 +50,4 @@ public class SongController {
                     .body("Ocorreu um erro ao processar a requisição da música: " + e.getMessage());
         }
     }
-    */
-}
+} 

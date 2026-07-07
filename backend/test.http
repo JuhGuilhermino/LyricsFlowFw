@@ -106,3 +106,21 @@ Content-Type: application/json
   "flashcardId": 26,
   "quality": "EASY"
 }
+
+### MÚSICA: Buscar no Genius e salvar no banco automaticamente se não existir
+POST {{baseUrl}}/song/search
+Content-Type: application/json
+
+{
+  "title": "Yellow",
+  "artist": "Coldplay"
+}
+
+### Teste isolado com palavra única
+POST {{baseUrl}}/song/search
+Content-Type: application/json
+
+{
+  "title": "Yellow",
+  "artist": ""
+}

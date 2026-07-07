@@ -6,23 +6,16 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "users") // Aqui a tabela física do banco de dados é realmente criada
-public class User extends BaseUser {
+@Table(name = "users")
+public class User extends com.example.lyricsflowfw.core.domain.BaseUser {
 
     @Enumerated(EnumType.STRING)
-    private LanguageLevel currentLevel; // Ponto Variável adicionado por este app
+    private com.example.lyricsflowfw.app.enums.LanguageLevel currentLevel;
 
     public User() {
         super();
     }
 
-    // Construtor completo utilizando os campos da classe pai
-    public User(Long id, String username, String email, String password, String avatarPath, LanguageLevel currentLevel, LocalDateTime createdAt) {
-        super(id, username, email, password, avatarPath, createdAt);
-        this.currentLevel = currentLevel;
-    }
-
-    // Getter e Setter apenas do ponto variável
-    public LanguageLevel getCurrentLevel() { return currentLevel; }
-    public void setCurrentLevel(LanguageLevel currentLevel) { this.currentLevel = currentLevel; }
+    public com.example.lyricsflowfw.app.enums.LanguageLevel getCurrentLevel() { return currentLevel; }
+    public void setCurrentLevel(com.example.lyricsflowfw.app.enums.LanguageLevel currentLevel) { this.currentLevel = currentLevel; }
 }

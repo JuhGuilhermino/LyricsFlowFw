@@ -2,7 +2,7 @@ package com.example.lyricsflowfw.core.domain;
 
 import jakarta.persistence.*;
 
-@MappedSuperclass // Compartilha os atributos e mapeamentos com a classe da aplicação
+@MappedSuperclass 
 public abstract class BaseSong {
     
     @Id
@@ -22,7 +22,6 @@ public abstract class BaseSong {
         this.lyrics = lyrics;
     }
 
-    // Getters e Setters do Core
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -32,3 +31,4 @@ public abstract class BaseSong {
     public String getLyrics() { return lyrics; }
     public void setLyrics(String lyrics) { this.lyrics = lyrics; }
 }
+

@@ -5,22 +5,19 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "songs")
-public class Song extends BaseSong {
-
-    // PONTO FLEXÍVEL: Especificidade declarada apenas nesta aplicação
-    private String artist; 
+public class Song extends com.example.lyricsflowfw.core.domain.BaseSong {
+    
+    private String artist; // Atributo específico da Aplicação 1
 
     public Song() {
         super();
     }
 
-    // Construtor Completo utilizando os campos da classe pai via super()
     public Song(Long id, String title, String artist, String lyrics) {
-        super(id, title, lyrics);
+        super(id, title, lyrics); // Repassa para os campos herdados do Core
         this.artist = artist;
     }
 
-    // Getter e Setter do campo variável
     public String getArtist() { return artist; }
     public void setArtist(String artist) { this.artist = artist; }
 }
