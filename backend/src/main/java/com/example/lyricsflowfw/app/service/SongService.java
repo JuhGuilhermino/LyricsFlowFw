@@ -16,11 +16,15 @@ import java.util.stream.Collectors;
 @Service
 public class SongService extends ContentService<Song, User> {
 
+    // Armazena a referência local do repositório da aplicação para persistência explícita
+    private final SongRepository localSongRepository;
+
     // Construtor injetando os repositórios da aplicação e a lista dinâmica de provedores externos
     public SongService(UserRepository userRepository, 
                        SongRepository songRepository,
                        List<ExternalContentProvider<Song>> contentProviders) {
         super(userRepository, songRepository, contentProviders);
+        this.localSongRepository = songRepository;
     }
 
     /**
@@ -49,11 +53,14 @@ public class SongService extends ContentService<Song, User> {
         // Dispara o resolvedor de provedores do core passando "API_GENIUS" como gatilho do sourceType
         return super.searchExternalContent(title, "API_GENIUS", artist)
                 .map(song -> {
+                    // CORREÇÃO: Salva fisicamente a entidade no banco de dados local para gerar o ID incremental
+                    Song savedSong = this.localSongRepository.save(song);
+
                     MusicResponseDTO dto = new MusicResponseDTO();
-                    dto.setId(song.getId());
-                    dto.setTitle(song.getTitle());
-                    dto.setArtist(song.getArtist());
-                    dto.setLyrics(song.getLyrics());
+                    dto.setId(savedSong.getId()); // Agora mapeia o ID real gerado pelo banco de dados
+                    dto.setTitle(savedSong.getTitle());
+                    dto.setArtist(savedSong.getArtist());
+                    dto.setLyrics(savedSong.getLyrics());
                     return dto;
                 });
     }

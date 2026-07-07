@@ -16,5 +16,5 @@ public interface BaseTaskRepository<T extends BaseTask<U, C>, U extends BaseUser
     List<T> findByUserId(Long userId);
 
     // Busca a tarefa combinando o ID do usuário e o ID da música (ambos mapeados na BaseTask)
-    Optional<T> findByUserIdAndSongId(Long userId, Long songId);
+    Optional<T> findByUserIdAndContentId(Long userId, Long contentId);
 }

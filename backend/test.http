@@ -106,3 +106,21 @@ Content-Type: application/json
   "flashcardId": 26,
   "quality": "EASY"
 }
+
+### MÚSICA: Testar busca e persistência na nova estrutura
+POST {{baseUrl}}/song/search
+Content-Type: application/json
+
+{
+  "title": "All that matters",
+  "artist": "Justin Bieber"
+}
+
+### TAREFA: Gerar tarefa usando o ID da música que acabou de ser salva
+POST {{baseUrl}}/tasks/start
+Content-Type: application/json
+
+{
+    "userId": 2,
+    "songId": 39
+}

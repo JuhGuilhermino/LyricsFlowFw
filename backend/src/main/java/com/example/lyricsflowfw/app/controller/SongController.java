@@ -1,13 +1,13 @@
 package com.example.lyricsflowfw.app.controller;
 
-//import com.example.lyricsflowfw.app.dto.MusicRequestDTO;
+import com.example.lyricsflowfw.app.dto.MusicRequestDTO;
 import com.example.lyricsflowfw.app.dto.MusicResponseDTO;
 import com.example.lyricsflowfw.app.service.SongService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-//import java.util.Optional;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/song")
@@ -30,12 +30,13 @@ public class SongController {
         }
     }
 
-    /*
+
     @PostMapping("/search")
     public ResponseEntity<?> findOrSaveMusic(@RequestBody MusicRequestDTO request) {
         try {
+            // Ajustado para invocar a nova nomenclatura definida no SongService
             Optional<MusicResponseDTO> responseOpt = 
-                this.songService.findAndSaveExternalSong(request.getTitle(), request.getArtist());
+                this.songService.fetchAndConvertExternalSong(request.getTitle(), request.getArtist());
 
             if (responseOpt.isPresent()) {
                 return ResponseEntity.ok(responseOpt.get());
@@ -51,6 +52,5 @@ public class SongController {
                     .body("Ocorreu um erro ao processar a requisição da música: " + e.getMessage());
         }
     }
-    */
     
-} 
+}
